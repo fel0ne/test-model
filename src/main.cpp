@@ -27,8 +27,21 @@ int main(){
 
     ImGui::CreateContext();
 
+    
+    
+//========== begin font =======    
     ImGuiIO io =ImGui::GetIO(); 
-    (void)io;
+
+    const ImWchar* cyrillic_ranges = io.Fonts->GetGlyphRangesCyrillic();
+
+    ImFont* font = io.Fonts->AddFontFromFileTTF("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 16.0f, nullptr, cyrillic_ranges);
+
+    if (font == nullptr) {
+        io.Fonts->AddFontFromFileTTF("/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf", 16.0f, nullptr, cyrillic_ranges);
+    }
+//=========== end font  =======
+
+
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);
 
@@ -47,7 +60,15 @@ int main(){
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
+        int x; 
+        int y;
 
+        glfwGetWindowSize(window,&x,&y);
+
+        ImVec2 size(x/2,y);
+        ImVec2 pos(0,0);
+        ImGui::SetNextWindowPos(pos);
+        ImGui::SetNextWindowSize(size);
         ImGui::Begin("Меню теста", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse );
         ImGui::Text("тут будет меню");
         ImGui::End();
