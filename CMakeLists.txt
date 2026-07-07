@@ -21,7 +21,7 @@ include_directories(third_party/glfw/include)
 
 add_executable(main 
     src/main.cpp
-    
+    src/model.cpp
 
     third_party/imgui/imgui.cpp
     third_party/imgui/imgui_demo.cpp

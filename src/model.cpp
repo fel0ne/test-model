@@ -10,11 +10,49 @@
 //(они могут частично перекрываться), при чётном m или чётном n — 2m лепестков (тоже с перекрытием). 
 
 // Если k — иррациональное число, роза превратится в ажурную, бесконечно развивающуюся структуру с бесконечным множеством частично перекрывающихся лепестков. 
+#pragma once
+
+
+#include <stdlib.h>
+#include <math.h>
 
 
 
 
-class model {
+
+class Model {
     public:
+        double* r;
+        double* f;
+        int current_resolution;
+    
+    
+    void start_math(float L, float m, float n){
+        
+        double current_angle;
+
+        for(int i = 0; i < current_resolution; i++){
+            current_angle = (180.0/(double)current_resolution) * i;
+            current_angle = current_angle * M_PI / 180;
+            
+            f[i] = current_angle;
+            r[i] = L * pow(fabsf(cosf(current_angle/2)), m) * pow(fabsf(sinf(current_angle/2)), n);
+        }   
+    };
+    
+
+
+    Model(int RESOLUTION_MODEL){
+        current_resolution = RESOLUTION_MODEL;
+
+        // r = new double[RESOLUTION_MODEL];
+        // f = new double[RESOLUTION_MODEL];
+        r = (double*)malloc(sizeof(double) * RESOLUTION_MODEL);
+        f = (double*)malloc(sizeof(double) * RESOLUTION_MODEL);
+    }
+
+
+    
+    
 
 };

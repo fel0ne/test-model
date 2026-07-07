@@ -1,5 +1,6 @@
 #include <vector>
 #include <math.h>
+#include <iostream>
 
 
 #include "imgui.h"
@@ -11,17 +12,22 @@
 
 #include <GLFW/glfw3.h>
 
-
+#include "model.cpp"
 
 //======== polar graph settings =======
 #define N_CIRCLES 7
 #define RESOLUTION_CIRCLE 1000
+#define RESOLUTION_MODEL 1000
 #define STEP_CIRCLES 1
 #define CUR_STP 1
 double current_step;
 double x_for_circle[RESOLUTION_CIRCLE];
 double y_for_circle[RESOLUTION_CIRCLE]; 
+double x_for_model[RESOLUTION_MODEL];
+double y_for_model[RESOLUTION_MODEL];
 //=====================================
+
+
 
 
 int main(){
@@ -66,6 +72,12 @@ int main(){
     ImVec2 size;
     ImVec2 pos;
 
+    float L = 1;
+    float m = 1;
+    float n = 1;
+    Model model = Model(RESOLUTION_MODEL);
+
+
     while (!glfwWindowShouldClose(window))
     {
 
@@ -83,12 +95,16 @@ int main(){
 
 
         //================  menu ==========================
+
+
         pos = ImVec2(0,0);
         size = ImVec2(x/4,y/2);
         ImGui::SetNextWindowPos(pos);
         ImGui::SetNextWindowSize(size);
         ImGui::Begin("Меню теста", nullptr, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar );
-        ImGui::Text("тут будет меню");
+        ImGui::SliderFloat("L", &L, 1.0f, 10.0f, "%.3f");
+        ImGui::SliderFloat("m", &m, 1.0f, 10.0f, "%.3f");
+        ImGui::SliderFloat("n", &n, 1.0f, 10.0f, "%.3f");
         ImGui::End();
         //=================================================
 
@@ -104,8 +120,6 @@ int main(){
             
             float max_radius = N_CIRCLES * STEP_CIRCLES;
             float margin = max_radius * 0.1f;
-
-            
             ImPlot::SetupAxisLimits(ImAxis_X1, -max_radius - margin, max_radius + margin);
             ImPlot::SetupAxisLimits(ImAxis_Y1, -max_radius - margin, max_radius + margin);
             
@@ -120,7 +134,22 @@ int main(){
                 ImPlot::PlotLine("##", x_for_circle, y_for_circle, RESOLUTION_CIRCLE);
                 current_step += STEP_CIRCLES;
             }
-            ImPlot::EndPlot();
+
+            model.start_math(L,m,n);
+
+            for(int i = 0; i < RESOLUTION_MODEL; i ++){
+                
+                x_for_model[i] = model.r[i] * cosf(model.f[i]);
+                y_for_model[i] = model.r[i] * sinf(model.f[i]);
+                if(i < 6){
+                    std::cout<<"i = "<< i << "   r = " <<  model.r[i] << "   f = " << model.f[i] << std::endl;
+                    std::cout<<"i = "<< i << "   x = " <<  x_for_model[i] << "   y = " << y_for_model[i] << std::endl;
+                }
+
+                
+            }
+            ImPlot::PlotLine("graph", x_for_model, y_for_model, RESOLUTION_MODEL );
+            ImPlot::EndPlot();            
         }
         ImGui::End();
         //=================================================
@@ -135,6 +164,14 @@ int main(){
         ImGui::Begin("##second", nullptr,  ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoTitleBar );
         ImPlot::BeginPlot("##secondp", size, ImPlotFlags_NoFrame );
 
+
+
+
+
+        ImPlot::PlotLine("graph", x_for_model, y_for_model, RESOLUTION_MODEL );
+        
+        
+        
         ImPlot::EndPlot();
         ImGui::End();
         //=================================================
